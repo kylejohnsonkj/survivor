@@ -1,0 +1,23 @@
+#main {
+    /* background-color: gainsboro; */
+}
+
+h1 {
+    padding-top: 10px;
+}
+
+.form-group {
+    padding-bottom: 10px;
+}
+
+.image-wrapper {
+    margin: 6px 0;
+    /* border: 2px dashed #ccc; */
+    background-color: rgba(1, 1, 1, 0.05);
+}
+
+#image {
+    object-fit: contain;
+    max-height: 560px;
+    width: 100%;
+}
