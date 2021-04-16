@@ -22,6 +22,7 @@ function handleImage(e) {
     var reader = new FileReader();
     reader.onload = function(event) {
         setImage(event.target.result, function() {});
+        updateText();
     }
     reader.readAsDataURL(e.target.files[0]);
 }
@@ -39,12 +40,8 @@ function setImage(e, callback) {
     img.src = savedImage;
 }
 
-const big = 45;
-const small = 25;
-const baseWidth = 1000;
-
 function getFont(fontSize) {
-    var ratio = fontSize / baseWidth;
+    var ratio = fontSize / 1000;
     var size = canvas.width * ratio;
     return (size | 0) + 'px CutamondBasic';
 }
@@ -55,15 +52,16 @@ var tribeText = "";
 
 function updateText() {
     setImage(savedImage, function() {
-        let xInset = 170;
-        let nameY = 90;
-        let skillY = 95;
-        let tribeY = 50;
+        let fourThreeInset = (canvas.width - canvas.height * (4 / 3)) / 2;
+        let xInset = fourThreeInset + canvas.height / 7.5;
+        let nameY = canvas.height / 5.6;
+        let skillY = canvas.height / 5.6;
+        let tribeY = canvas.height / 9;
 
-        drawText(nameText, big, xInset, nameY);
-        const xOffset = ctx.measureText(nameText).width + 20;
-        drawText(skillText, small, xInset + xOffset, skillY);
-        drawText(tribeText, small, xInset, tribeY);
+        drawText(nameText, 45, xInset, nameY);
+        const xOffset = ctx.measureText(nameText).width + canvas.width / 30;
+        drawText(skillText, 28, xInset + xOffset, skillY);
+        drawText(tribeText, 28, xInset, tribeY);
     });
 }
 
@@ -73,7 +71,9 @@ function drawText(text, size, x, y) {
     ctx.shadowColor = "black";
     ctx.shadowOffsetX = 4;
     ctx.shadowOffsetY = 3;
+    ctx.letterSpacing = 26;
     ctx.shadowBlur = 4;
+    let finalText = text.split("").join(String.fromCharCode(8202));
     ctx.fillText(text, x, canvas.height - y);
 }
 
