@@ -21,3 +21,8 @@ h1 {
     width: 100%;
     background-color: lightgray;
 }
+
+@font-face {
+    font-family: 'CutamondBasic';
+    src: url('CutamondBasic.ttf');
+}
