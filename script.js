@@ -1,19 +1,18 @@
-var canvas,
-    ctx,
-    savedImage;
+var canvas, ctx;
+var savedImage;
+var savedColor = '#7bd148';
 
-$(document).ready(function() {
-    const imageLoader = document.getElementById('image-loader');
-    imageLoader.addEventListener('change', handleImage, false);
+jQuery(function() {
+    $('#image-loader').on('change', handleImage);
 
-    const nameInput = document.getElementById('name-input');
-    nameInput.addEventListener('keyup', modifyName, false);
+    $('#name').on('keyup', modifyName);
+    $('#skill').on('keyup', modifySkill);
+    $('#tribe').on('keyup', modifyTribe);
 
-    const skillInput = document.getElementById('skill-input');
-    skillInput.addEventListener('keyup', modifySkill, false);
-
-    const tribeInput = document.getElementById('tribe-input');
-    tribeInput.addEventListener('keyup', modifyTribe, false);
+    $('#color').simplecolorpicker().on('change', function() {
+        let color = $('#color').val();
+        modifyColor(color);
+    });
 
     canvas = document.getElementById('image-canvas');
     ctx = canvas.getContext('2d');
@@ -56,16 +55,21 @@ var tribeText = "";
 
 function updateText() {
     setImage(savedImage, function() {
-        drawText(nameText, big, 170, 90);
-        const nameWidth = ctx.measureText(nameText).width;
-        drawText(skillText, small, 170 + nameWidth + 20, 95);
-        drawText(tribeText, small, 170, 50);
+        let xInset = 170;
+        let nameY = 90;
+        let skillY = 95;
+        let tribeY = 50;
+
+        drawText(nameText, big, xInset, nameY);
+        const xOffset = ctx.measureText(nameText).width + 20;
+        drawText(skillText, small, xInset + xOffset, skillY);
+        drawText(tribeText, small, xInset, tribeY);
     });
 }
 
 function drawText(text, size, x, y) {
     ctx.font = getFont(size);
-    ctx.fillStyle = 'orange';
+    ctx.fillStyle = savedColor;
     ctx.shadowColor = "black";
     ctx.shadowOffsetX = 4;
     ctx.shadowOffsetY = 3;
@@ -85,5 +89,10 @@ function modifySkill(e) {
 
 function modifyTribe(e) {
     tribeText = e.target.value.toUpperCase();
+    updateText();
+}
+
+function modifyColor(color) {
+    savedColor = color;
     updateText();
 }

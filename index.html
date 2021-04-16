@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+    <script src="scp/jquery.simplecolorpicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="scp/jquery.simplecolorpicker.css">
     <script src="script.js"></script>
 </head>
 
@@ -23,15 +26,32 @@
                 <form id="form">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name-input" placeholder="Garrett">
+                        <input type="text" class="form-control" id="name" placeholder="Garrett" autocorrect="off">
                     </div>
                     <div class="form-group">
                         <label for="skill">Skill/Occupation</label>
-                        <input type="text" class="form-control" id="skill-input" placeholder="Pro Poker Player">
+                        <input type="text" class="form-control" id="skill" placeholder="Pro Poker Player" autocorrect="off">
                     </div>
                     <div class="form-group">
                         <label for="tribe">Tribe Name</label>
-                        <input type="text" class="form-control" id="tribe-input" placeholder="Brains">
+                        <input type="text" class="form-control" id="tribe" placeholder="Brains" autocorrect="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="color" style="width: 100%">Text Color</label>
+                        <select id="color" name="colorpicker-shortlist">
+                            <option value="#7bd148">Green</option>
+                            <option value="#5484ed">Bold blue</option>
+                            <option value="#a4bdfc">Blue</option>
+                            <option value="#46d6db">Turquoise</option>
+                            <option value="#7ae7bf">Light green</option>
+                            <option value="#51b749">Bold green</option>
+                            <option value="#fbd75b">Yellow</option>
+                            <option value="#ffb878">Orange</option>
+                            <option value="#ff887c">Red</option>
+                            <option value="#dc2127">Bold red</option>
+                            <option value="#dbadff">Purple</option>
+                            <option value="#e1e1e1">Gray</option>
+                          </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Download Image</button>
                 </form>
