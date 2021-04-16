@@ -11,13 +11,13 @@ h1 {
 }
 
 .image-wrapper {
-    margin: 6px 0;
+    margin-top: 6px;
     /* border: 2px dashed #ccc; */
-    background-color: rgba(1, 1, 1, 0.05);
 }
 
-#image {
+#image-canvas {
     object-fit: contain;
     max-height: 560px;
     width: 100%;
+    background-color: lightgray;
 }

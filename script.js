@@ -1,19 +1,24 @@
-function showMyImage(fileInput) {
-    var files = fileInput.files;
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var imageType = /image.*/;
-        if (!file.type.match(imageType)) {
-            continue;
+var imageLoader;
+var canvas;
+var ctx;
+
+$(document).ready(function() {
+    imageLoader = document.getElementById('image-loader');
+    imageLoader.addEventListener('change', handleImage, false);
+    canvas = document.getElementById('image-canvas');
+    ctx = canvas.getContext('2d');
+});
+
+function handleImage(e) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        var img = new Image();
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
         }
-        var img = document.getElementById("image");
-        img.file = file;
-        var reader = new FileReader();
-        reader.onload = (function(aImg) {
-            return function(e) {
-                aImg.src = e.target.result;
-            };
-        })(img);
-        reader.readAsDataURL(file);
+        img.src = event.target.result;
     }
+    reader.readAsDataURL(e.target.files[0]);
 }
