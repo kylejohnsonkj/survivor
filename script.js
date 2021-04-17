@@ -1,9 +1,10 @@
 var canvas, ctx;
+var textCanvas;
 var savedImage;
 var savedColor = '#7bd148';
 
 jQuery(function() {
-    $('#image-loader').on('change', handleImage);
+    $('#image-loader').on('change', handleChoose);
 
     $('#name').on('keyup', modifyName);
     $('#skill').on('keyup', modifySkill);
@@ -15,35 +16,69 @@ jQuery(function() {
     });
 
     canvas = document.getElementById('image-canvas');
+    canvas.width = 1920;
+    canvas.height = 1080;
+
+    // setImage("samples/garrett.png", function() {});
     ctx = canvas.getContext('2d');
+    updateText();
+
+    $('.image-wrapper').on('dragover', handleDrag);
+    $('.image-wrapper').on('drop', handleDrop);
 });
 
-function handleImage(e) {
-    var reader = new FileReader();
-    reader.onload = function(event) {
-        setImage(event.target.result, function() {});
-        updateText();
-    }
-    reader.readAsDataURL(e.target.files[0]);
+function handleDrag(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.originalEvent.dataTransfer.dropEffect = 'copy';
 }
 
-function setImage(e, callback) {
+function handleDrop(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    handleImage(e.originalEvent.dataTransfer.files[0]);
+}
+
+function handleChoose(e) {
+    handleImage(e.target.files[0]);
+}
+
+function handleImage(file) {
+    if (file.type.match(/image.*/)) {
+        let reader = new FileReader();
+        reader.onload = function(event) {
+            setImage(event.target.result, updateText);
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+function setImage(newImage, callback) {
+    if (newImage == null) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        callback();
+        return;
+    }
+
     var img = new Image();
     img.onload = function() {
         canvas.width = img.width;
         canvas.height = img.height;
-        console.log(canvas.width + " " + canvas.height);
         ctx.drawImage(img, 0, 0);
+        $('.image-wrapper').css("border", "none");
         callback();
     }
-    savedImage = e;
+    savedImage = newImage;
     img.src = savedImage;
 }
 
-function getFont(fontSize) {
-    var ratio = fontSize / 1000;
-    var size = canvas.width * ratio;
-    return (size | 0) + 'px CutamondBasic';
+function ratio(num) {
+    let min = Math.min(canvas.width, canvas.height);
+    return num * (min / 560);
+}
+
+function getFont(size) {
+    return ratio(size) + 'px CutamondBasic';
 }
 
 var nameText = "";
@@ -52,16 +87,17 @@ var tribeText = "";
 
 function updateText() {
     setImage(savedImage, function() {
-        let fourThreeInset = (canvas.width - canvas.height * (4 / 3)) / 2;
-        let xInset = fourThreeInset + canvas.height / 7.5;
-        let nameY = canvas.height / 5.6;
-        let skillY = canvas.height / 5.6;
-        let tribeY = canvas.height / 9;
+        let min = Math.min(canvas.width, canvas.height);
+        let startX = Math.max((canvas.width - min) / 5 + (ratio(100)), (ratio(50)));
 
-        drawText(nameText, 45, xInset, nameY);
-        const xOffset = ctx.measureText(nameText).width + canvas.width / 30;
-        drawText(skillText, 28, xInset + xOffset, skillY);
-        drawText(tribeText, 28, xInset, tribeY);
+        let nameY = 100;
+        let skillY = 100;
+        let tribeY = 60;
+
+        drawText(nameText, 45, startX, nameY);
+        let xOffset = ctx.measureText(nameText).width + ratio(25); // to place after name
+        drawText(skillText, 27, startX + xOffset, skillY);
+        drawText(tribeText, 29, startX + ratio(2), tribeY);
     });
 }
 
@@ -69,26 +105,24 @@ function drawText(text, size, x, y) {
     ctx.font = getFont(size);
     ctx.fillStyle = savedColor;
     ctx.shadowColor = "black";
-    ctx.shadowOffsetX = 4;
-    ctx.shadowOffsetY = 3;
-    ctx.letterSpacing = 26;
-    ctx.shadowBlur = 4;
-    let finalText = text.split("").join(String.fromCharCode(8202));
-    ctx.fillText(text, x, canvas.height - y);
+    ctx.shadowOffsetX = ratio(4);
+    ctx.shadowOffsetY = ratio(3);
+    ctx.shadowBlur = ratio(4);
+    ctx.fillText(text, x, canvas.height - ratio(y));
 }
 
 function modifyName(e) {
-    nameText = e.target.value.toUpperCase();
+    nameText = e.target.value.trim().toUpperCase();
     updateText();
 }
 
 function modifySkill(e) {
-    skillText = e.target.value.toUpperCase();
+    skillText = e.target.value.trim().toUpperCase();
     updateText();
 }
 
 function modifyTribe(e) {
-    tribeText = e.target.value.toUpperCase();
+    tribeText = e.target.value.trim().toUpperCase();
     updateText();
 }
 
