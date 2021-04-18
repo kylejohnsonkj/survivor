@@ -1,11 +1,32 @@
-var canvas, ctx;
-var textCanvas;
+var imageCanvas, ctx1;
+var textCanvas, ctx2;
+
 var savedImage;
 var savedColor = '#7bd148';
 
-jQuery(function() {
-    $('#image-loader').on('change', handleChoose);
+var nameText = "";
+var skillText = "";
+var tribeText = "";
 
+jQuery(function() {
+    $('#canvas-wrapper').on('dragover', handleDrag);
+    $('#canvas-wrapper').on('drop', handleDrop);
+
+    // background image
+    imageCanvas = document.getElementById('image-canvas');
+    imageCanvas.width = 1920;
+    imageCanvas.height = 1080;
+    ctx1 = imageCanvas.getContext('2d');
+
+    // text overlay
+    textCanvas = document.getElementById('text-canvas');
+    textCanvas.width = 1920;
+    textCanvas.height = 1080;
+    ctx2 = textCanvas.getContext('2d');
+
+    $('#image-chooser').on('change', handleChoose);
+
+    // form
     $('#name').on('keyup', modifyName);
     $('#skill').on('keyup', modifySkill);
     $('#tribe').on('keyup', modifyTribe);
@@ -15,41 +36,11 @@ jQuery(function() {
         modifyColor(color);
     });
 
-    canvas = document.getElementById('canvas');
-    canvas.width = 1920;
-    canvas.height = 1080;
-
-    // setImage("samples/garrett.png", function() {});
-    ctx = canvas.getContext('2d');
-    updateText();
-
-    $('.image-wrapper').on('dragover', handleDrag);
-    $('.image-wrapper').on('drop', handleDrop);
-
     $('#download').on('click', handleDownload);
-    $('#textonly').on('click', clearBgThenDownload)
-
+    $('#textonly').on('click', handleTextOnly)
 });
 
-function clearBgThenDownload(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    updateText(null); // clear image
-    handleDownload(e, function() {
-        setImage(savedImage, updateText);
-    });
-}
-
-function handleDownload(e, callback) {
-    e.stopPropagation();
-    e.preventDefault();
-    var link = document.createElement('a');
-    let fileName = (nameText == "") ? 'blank' : nameText.toLowerCase();
-    link.download = fileName + '.png';
-    link.href = canvas.toDataURL()
-    link.click();
-    callback();
-}
+// MARK: - image handling
 
 function handleDrag(e) {
     e.stopPropagation();
@@ -71,73 +62,29 @@ function handleImage(file) {
     if (file.type.match(/image.*/)) {
         let reader = new FileReader();
         reader.onload = function(event) {
-            setImage(event.target.result, updateText);
+            setImage(event.target.result);
         }
         reader.readAsDataURL(file);
     }
 }
 
-function setImage(newImage, callback) {
-    if (newImage == null) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        callback();
-        return;
-    }
-
+function setImage(newImage) {
     var img = new Image();
     img.onload = function() {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        $('.image-wrapper').css("border", "none");
-        callback();
+        imageCanvas.width = img.width;
+        imageCanvas.height = img.height;
+        textCanvas.width = img.width;
+        textCanvas.height = img.height;
+
+        ctx1.drawImage(img, 0, 0);
+        $('#canvas-wrapper').css("border", "none");
+        updateText();
     }
     savedImage = newImage;
     img.src = savedImage;
 }
 
-function ratio(num) {
-    let min = Math.min(canvas.width, canvas.height);
-    return num * (min / 560);
-}
-
-function getFont(size) {
-    return ratio(size) + 'px CutamondBasic';
-}
-
-var nameText = "";
-var skillText = "";
-var tribeText = "";
-
-function updateText(override) {
-    var image = savedImage;
-    if (override !== undefined) {
-        image = override;
-    }
-    setImage(image, function() {
-        let min = Math.min(canvas.width, canvas.height);
-        let startX = Math.max((canvas.width - min) / 5 + (ratio(100)), (ratio(50)));
-
-        let nameY = 100;
-        let skillY = 100;
-        let tribeY = 60;
-
-        drawText(nameText, 45, startX, nameY);
-        let xOffset = ctx.measureText(nameText).width + ratio(25); // to place after name
-        drawText(skillText, 27, startX + xOffset, skillY);
-        drawText(tribeText, 29, startX + ratio(2), tribeY);
-    });
-}
-
-function drawText(text, size, x, y) {
-    ctx.font = getFont(size);
-    ctx.fillStyle = savedColor;
-    ctx.shadowColor = "black";
-    ctx.shadowOffsetX = ratio(4);
-    ctx.shadowOffsetY = ratio(3);
-    ctx.shadowBlur = ratio(4);
-    ctx.fillText(text, x, canvas.height - ratio(y));
-}
+// MARK: - input handling
 
 function modifyName(e) {
     nameText = e.target.value.trim().toUpperCase();
@@ -157,4 +104,82 @@ function modifyTribe(e) {
 function modifyColor(color) {
     savedColor = color;
     updateText();
+}
+
+// MARK: - text handling
+
+function updateText() {
+    // remove old text before redrawing
+    ctx2.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+
+    // calculate based on image dimensions
+    let min = Math.min(textCanvas.width, textCanvas.height);
+    let startX = (textCanvas.width - min) / 5 + ratio(100);
+
+    // height from bottom
+    let nameY = 100;
+    let skillY = 100;
+    let tribeY = 60;
+
+    drawText(nameText, 45, startX, nameY);
+    let xOffset = ctx2.measureText(nameText).width + ratio(25); // to place after name
+    drawText(skillText, 27, startX + xOffset, skillY);
+    drawText(tribeText, 29, startX + ratio(2), tribeY);
+}
+
+function drawText(text, size, x, y) {
+    ctx2.font = getFont(size);
+    ctx2.fillStyle = savedColor;
+
+    ctx2.shadowColor = "black";
+    ctx2.shadowOffsetX = ratio(4);
+    ctx2.shadowOffsetY = ratio(3);
+    ctx2.shadowBlur = ratio(4);
+
+    ctx2.fillText(text, x, textCanvas.height - ratio(y));
+}
+
+function ratio(num) {
+    let min = Math.min(textCanvas.width, textCanvas.height);
+    return num * (min / 560); // arbitrary value
+}
+
+function getFont(size) {
+    return ratio(size) + 'px CutamondBasic';
+}
+
+// MARK: - download handling
+
+function handleTextOnly(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    handleDownload(e, true); // textOnly = true
+}
+
+function handleDownload(e, textOnly) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    var link = document.createElement('a');
+    let fileName = (nameText == "") ? 'blank' : nameText.toLowerCase();
+    link.download = fileName + '.png';
+    if (textOnly) {
+        link.href = textCanvas.toDataURL();
+    } else {
+        link.href = combinedCanvasDataURL();
+    }
+    link.click();
+}
+
+function combinedCanvasDataURL() {
+    let combinedCanvas = document.createElement('canvas');
+    combinedCanvas.width = imageCanvas.width;
+    combinedCanvas.height = imageCanvas.height;
+
+    let ctx3 = combinedCanvas.getContext('2d');
+    ctx3.drawImage(imageCanvas, 0, 0);
+    ctx3.drawImage(textCanvas, 0, 0);
+
+    return combinedCanvas.toDataURL();
 }

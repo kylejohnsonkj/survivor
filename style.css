@@ -1,34 +1,39 @@
-#main {
-    /* background-color: gainsboro; */
+@font-face {
+    font-family: 'CutamondBasic';
+    src: url('CutamondBasic.ttf');
 }
 
 h1 {
     padding-top: 10px;
 }
 
-.form-group {
-    padding-bottom: 10px;
-}
-
-.image-wrapper {
+#canvas-wrapper {
+    position: relative;
     margin: 6px 0;
     border: 3px dashed #ccc;
 }
 
-#canvas {
-    object-fit: contain;
+.canvas {
     width: 100%;
-    background-color: rgba(1, 1, 1, 0.03);
     display: block;
 }
 
-#image-loader {
+#image-canvas {
+    background-color: rgba(1, 1, 1, 0.03);
+}
+
+#text-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#image-chooser {
     margin-bottom: 10px;
 }
 
-@font-face {
-    font-family: 'CutamondBasic';
-    src: url('CutamondBasic.ttf');
+.form-group {
+    padding-bottom: 10px;
 }
 
 #notice {
