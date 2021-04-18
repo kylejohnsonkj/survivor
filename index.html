@@ -18,7 +18,7 @@
         <div id="main" class="row">
             <div class="col-md-12 col-lg-7">
                 <div class="image-wrapper">
-                    <canvas id="image-canvas"></canvas>
+                    <canvas id="canvas"></canvas>
                 </div>
                 <input type="file" id="image-loader" accept="image/*" />
             </div>
@@ -53,8 +53,8 @@
                             <option value="#e1e1e1">Gray</option>
                           </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Download Image</button>
-                    <button type="submit" class="btn btn-secondary">Download Text Only</button>
+                    <button id="download" class="btn btn-primary">Download Image</button>
+                    <button id="textonly" class="btn btn-secondary">Download Text Only</button>
 
                     <small id="notice" class="form-text text-muted">Downloading without setting a background image or using the text only option will provide a transparent background useful for video overlay.</small>
                 </form>

@@ -15,7 +15,7 @@ h1 {
     border: 3px dashed #ccc;
 }
 
-#image-canvas {
+#canvas {
     object-fit: contain;
     width: 100%;
     background-color: rgba(1, 1, 1, 0.03);

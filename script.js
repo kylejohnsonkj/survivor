@@ -15,7 +15,7 @@ jQuery(function() {
         modifyColor(color);
     });
 
-    canvas = document.getElementById('image-canvas');
+    canvas = document.getElementById('canvas');
     canvas.width = 1920;
     canvas.height = 1080;
 
@@ -25,7 +25,31 @@ jQuery(function() {
 
     $('.image-wrapper').on('dragover', handleDrag);
     $('.image-wrapper').on('drop', handleDrop);
+
+    $('#download').on('click', handleDownload);
+    $('#textonly').on('click', clearBgThenDownload)
+
 });
+
+function clearBgThenDownload(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    updateText(null); // clear image
+    handleDownload(e, function() {
+        setImage(savedImage, updateText);
+    });
+}
+
+function handleDownload(e, callback) {
+    e.stopPropagation();
+    e.preventDefault();
+    var link = document.createElement('a');
+    let fileName = (nameText == "") ? 'blank' : nameText.toLowerCase();
+    link.download = fileName + '.png';
+    link.href = canvas.toDataURL()
+    link.click();
+    callback();
+}
 
 function handleDrag(e) {
     e.stopPropagation();
@@ -85,8 +109,12 @@ var nameText = "";
 var skillText = "";
 var tribeText = "";
 
-function updateText() {
-    setImage(savedImage, function() {
+function updateText(override) {
+    var image = savedImage;
+    if (override !== undefined) {
+        image = override;
+    }
+    setImage(image, function() {
         let min = Math.min(canvas.width, canvas.height);
         let startX = Math.max((canvas.width - min) / 5 + (ratio(100)), (ratio(50)));
 
