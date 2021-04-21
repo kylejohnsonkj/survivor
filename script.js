@@ -127,16 +127,33 @@ function updateText() {
     drawText(tribeText, 29, startX + ratio(2), tribeY);
 }
 
-function drawText(text, size, x, y) {
-    ctx2.font = getFont(size);
-    ctx2.fillStyle = savedColor;
+function drawText(text, size, x, yOffset) {
+    let y = textCanvas.height - ratio(yOffset);
 
+    ctx2.font = getFont(size);
     ctx2.shadowColor = "black";
     ctx2.shadowOffsetX = ratio(4);
     ctx2.shadowOffsetY = ratio(3);
     ctx2.shadowBlur = ratio(4);
 
-    ctx2.fillText(text, x, textCanvas.height - ratio(y));
+    var gradient = ctx2.createLinearGradient(0, y - ratio(size), 0, y);
+    gradient.addColorStop(0, derivedHexColor(savedColor, 0.75));
+    gradient.addColorStop(0.4, savedColor);
+    gradient.addColorStop(1, derivedHexColor(savedColor, 0.5));
+    ctx2.fillStyle = gradient;
+
+    ctx2.fillText(text, x, y);
+
+}
+
+function derivedHexColor(color, percent) {
+    var f = parseInt(color.slice(1), 16),
+        t = percent < 0 ? 0 : 255,
+        p = percent < 0 ? percent * -1 : percent,
+        R = f >> 16,
+        G = f >> 8 & 0x00FF,
+        B = f & 0x0000FF;
+    return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
 }
 
 function ratio(num) {
