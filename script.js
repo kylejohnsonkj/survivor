@@ -33,7 +33,7 @@ jQuery(function() {
 
     selectColor();
     $('#color').simplecolorpicker().on('change', selectColor);
-    $('#hex-color').on('keyup', handleHexColor);
+    $('#hex-color').on('input', handleHexColor);
     $('#gradient').on('change', handleGradient);
 
     $('#download').on('click', handleDownload);
@@ -108,6 +108,7 @@ function modifyTribe(e) {
 
 function selectColor() {
     let color = $('#color').val();
+    $('#hex-color').val(color);
     modifyColor(color);
 }
 
@@ -118,13 +119,20 @@ function handleHexColor() {
     if (!color.trim()) {
         selectColor(); // revert to color picker selection
     } else if (isHexColor(color)) {
+        deselectColor();
         modifyColor(color);
+    }
+}
+
+function deselectColor() {
+    let selectedColor = document.querySelector('span.color[data-selected]');
+    if (selectedColor !== null) {
+        selectedColor.removeAttribute('data-selected');
     }
 }
 
 function modifyColor(color) {
     savedColor = color;
-    $('#hex-color').attr('placeholder', color);
     updateText();
 }
 
