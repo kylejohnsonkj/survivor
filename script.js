@@ -1,8 +1,7 @@
 var imageCanvas, ctx1;
 var textCanvas, ctx2;
 
-var savedImage;
-var savedColor = '#7bd148';
+var savedImage, savedColor;
 
 var nameText = "";
 var skillText = "";
@@ -31,13 +30,17 @@ jQuery(function() {
     $('#skill').on('keyup', modifySkill);
     $('#tribe').on('keyup', modifyTribe);
 
-    $('#color').simplecolorpicker().on('change', function() {
-        let color = $('#color').val();
-        modifyColor(color);
-    });
+    selectColor();
+    $('#color').simplecolorpicker().on('change', selectColor);
+    $('#hex-color').on('keyup', handleHexColor);
 
     $('#download').on('click', handleDownload);
-    $('#textonly').on('click', handleTextOnly)
+    $('#textonly').on('click', handleTextOnly);
+
+    // force load font for testing
+    setTimeout(function() {
+        updateText();
+    }, 100);
 });
 
 // MARK: - image handling
@@ -101,8 +104,25 @@ function modifyTribe(e) {
     updateText();
 }
 
+function selectColor() {
+    let color = $('#color').val();
+    modifyColor(color);
+}
+
+function handleHexColor() {
+    var color = $('#hex-color').val();
+    color = color.replace('#', '');
+
+    if (!color.trim()) {
+        selectColor(); // revert to color picker selection
+    } else if (isHexColor(color)) {
+        modifyColor(color);
+    }
+}
+
 function modifyColor(color) {
     savedColor = color;
+    $('#hex-color').attr('placeholder', color);
     updateText();
 }
 
@@ -137,23 +157,13 @@ function drawText(text, size, x, yOffset) {
     ctx2.shadowBlur = ratio(4);
 
     var gradient = ctx2.createLinearGradient(0, y - ratio(size), 0, y);
-    gradient.addColorStop(0, derivedHexColor(savedColor, 0.75));
-    gradient.addColorStop(0.4, savedColor);
-    gradient.addColorStop(1, derivedHexColor(savedColor, 0.5));
+    gradient.addColorStop(0, derivedHexColor(savedColor, 100));
+    gradient.addColorStop(0.5, savedColor);
+    gradient.addColorStop(1, derivedHexColor(savedColor, 100));
     ctx2.fillStyle = gradient;
 
     ctx2.fillText(text, x, y);
 
-}
-
-function derivedHexColor(color, percent) {
-    var f = parseInt(color.slice(1), 16),
-        t = percent < 0 ? 0 : 255,
-        p = percent < 0 ? percent * -1 : percent,
-        R = f >> 16,
-        G = f >> 8 & 0x00FF,
-        B = f & 0x0000FF;
-    return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
 }
 
 function ratio(num) {
@@ -179,7 +189,7 @@ function handleDownload(e, textOnly) {
     e.preventDefault();
 
     var link = document.createElement('a');
-    let fileName = (nameText == "") ? 'blank' : nameText.toLowerCase();
+    let fileName = (!nameText) ? 'blank' : nameText.toLowerCase();
     link.download = fileName + '.png';
     if (textOnly) {
         link.href = textCanvas.toDataURL();
@@ -199,4 +209,31 @@ function combinedCanvasDataURL() {
     ctx3.drawImage(textCanvas, 0, 0);
 
     return combinedCanvas.toDataURL();
+}
+
+// MARK: - color helpers
+
+function isHexColor(hex) {
+    return typeof hex === 'string' &&
+        hex.length === 6 &&
+        !isNaN(Number('0x' + hex))
+}
+
+function derivedHexColor(col, amt) {
+    var usePound = false;
+    if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+    }
+    var num = parseInt(col, 16);
+    var r = (num >> 16) + amt;
+    if (r > 255) r = 255;
+    else if (r < 0) r = 0;
+    var b = ((num >> 8) & 0x00FF) + amt;
+    if (b > 255) b = 255;
+    else if (b < 0) b = 0;
+    var g = (num & 0x0000FF) + amt;
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+    return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
 }

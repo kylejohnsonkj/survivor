@@ -36,6 +36,16 @@ h1 {
     padding-bottom: 10px;
 }
 
+.split-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#hex-color {
+    height: 38px;
+    width: 100px;
+}
+
 #notice {
     display: block;
     margin: 10px 0;
