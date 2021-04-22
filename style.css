@@ -36,6 +36,11 @@ h1 {
     padding-bottom: 10px;
 }
 
+.form-check {
+    margin-top: -8px;
+    padding-bottom: 10px;
+}
+
 .split-row {
     display: flex;
     justify-content: space-between;

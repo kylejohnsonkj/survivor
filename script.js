@@ -2,6 +2,7 @@ var imageCanvas, ctx1;
 var textCanvas, ctx2;
 
 var savedImage, savedColor;
+var useGradient = true;
 
 var nameText = "";
 var skillText = "";
@@ -33,6 +34,7 @@ jQuery(function() {
     selectColor();
     $('#color').simplecolorpicker().on('change', selectColor);
     $('#hex-color').on('keyup', handleHexColor);
+    $('#gradient').on('change', handleGradient);
 
     $('#download').on('click', handleDownload);
     $('#textonly').on('click', handleTextOnly);
@@ -126,6 +128,11 @@ function modifyColor(color) {
     updateText();
 }
 
+function handleGradient() {
+    useGradient = $('#gradient').is(':checked')
+    updateText();
+}
+
 // MARK: - text handling
 
 function updateText() {
@@ -160,7 +167,7 @@ function drawText(text, size, x, yOffset) {
     gradient.addColorStop(0, derivedHexColor(savedColor, 100));
     gradient.addColorStop(0.5, savedColor);
     gradient.addColorStop(1, derivedHexColor(savedColor, 100));
-    ctx2.fillStyle = gradient;
+    ctx2.fillStyle = (useGradient) ? gradient : savedColor;
 
     ctx2.fillText(text, x, y);
 
