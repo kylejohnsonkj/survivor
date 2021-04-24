@@ -132,6 +132,9 @@ function deselectColor() {
 }
 
 function modifyColor(color) {
+    if (!color.startsWith("#")) {
+        color = "#" + color;
+    }
     savedColor = color;
     updateText();
 }
