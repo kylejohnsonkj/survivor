@@ -4,9 +4,9 @@ var textCanvas, ctx2;
 var savedImage, savedColor;
 var useGradient = true;
 
-var nameText = "";
-var skillText = "";
-var tribeText = "";
+var nameText = '';
+var skillText = '';
+var tribeText = '';
 
 jQuery(function() {
     $('#canvas-wrapper').on('dragover', handleDrag);
@@ -38,6 +38,8 @@ jQuery(function() {
 
     $('#download').on('click', handleDownload);
     $('#textonly').on('click', handleTextOnly);
+
+    // setImage('images/sophie.jpg');
 
     // force load font for testing
     setTimeout(function() {
@@ -82,27 +84,35 @@ function setImage(newImage) {
         textCanvas.height = img.height;
 
         ctx1.drawImage(img, 0, 0);
-        $('#canvas-wrapper').css("border", "none");
+        $('#canvas-wrapper').css('border', 'none');
+        hideDropInfo();
         updateText();
     }
     savedImage = newImage;
     img.src = savedImage;
 }
 
+function hideDropInfo() {
+    $('#drop-info').css('visibility', 'hidden');
+}
+
 // MARK: - input handling
 
 function modifyName(e) {
     nameText = e.target.value.trim().toUpperCase();
+    hideDropInfo();
     updateText();
 }
 
 function modifySkill(e) {
     skillText = e.target.value.trim().toUpperCase();
+    hideDropInfo();
     updateText();
 }
 
 function modifyTribe(e) {
     tribeText = e.target.value.trim().toUpperCase();
+    hideDropInfo();
     updateText();
 }
 
@@ -132,8 +142,8 @@ function deselectColor() {
 }
 
 function modifyColor(color) {
-    if (!color.startsWith("#")) {
-        color = "#" + color;
+    if (!color.startsWith('#')) {
+        color = '#' + color;
     }
     savedColor = color;
     updateText();
@@ -169,7 +179,7 @@ function drawText(text, size, x, yOffset) {
     let y = textCanvas.height - ratio(yOffset);
 
     ctx2.font = getFont(size);
-    ctx2.shadowColor = "black";
+    ctx2.shadowColor = 'black';
     ctx2.shadowOffsetX = ratio(4);
     ctx2.shadowOffsetY = ratio(3);
     ctx2.shadowBlur = ratio(4);
@@ -239,7 +249,7 @@ function isHexColor(hex) {
 
 function derivedHexColor(col, amt) {
     var usePound = false;
-    if (col[0] == "#") {
+    if (col[0] == '#') {
         col = col.slice(1);
         usePound = true;
     }
@@ -253,5 +263,5 @@ function derivedHexColor(col, amt) {
     var g = (num & 0x0000FF) + amt;
     if (g > 255) g = 255;
     else if (g < 0) g = 0;
-    return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+    return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
 }

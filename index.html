@@ -18,6 +18,11 @@
         <div id="main" class="row">
             <div class="col-md-12 col-lg-7">
                 <div id="canvas-wrapper">
+                    <div id="drop-info">
+                        <img id="drop-icon" src="images/drop.png">
+                        <br>drag and drop image here
+                        <br>or choose file below
+                    </div>
                     <canvas id="image-canvas" class="canvas"></canvas>
                     <canvas id="text-canvas" class="canvas"></canvas>
                 </div>
@@ -41,16 +46,16 @@
                         <label for="color">Text Color</label>
                         <div class="split-row">
                             <select id="color" name="colorpicker-shortlist">
-                                <option value="#ff9900">Tagi (S1)</option>
-                                <option value="#ffe403">La Flor (S21)</option>
-                                <option value="#5cce5d">Forza (S18)</option>
-                                <option value="#0167d6">Sele (S40)</option>
-                                <option value="#dd241a">Fang (S17)</option>
-                                <option value="#f400a1">Soliantu (S4)</option>
-                                <option value="#7900aa">Casaya (S12)</option>
-                                <option value="#201c21">Merica (S30)</option>
-                                <option value="#784937">Koror (S10)</option>
-                                <option value="#dddddd">Gray</option>
+                                <option value="#F43744">Red</option>
+                                <option value="#D8AB0E">Yellow</option>
+                                <option value="#9F5AC6">Purple</option>
+                                <option value="#FE7100">Orange</option>
+                                <option value="#348BFE">Blue</option>
+                                <option value="#57B439">Green</option>
+                                <option value="#D455AB">Pink</option>
+                                <option value="#34967F">Teal</option>
+                                <option value="#BF765C">Brown</option>
+                                <option value="#B6B6BA">Gray</option>
                               </select>
                             <input type="color" class="form-control" id="hex-color" autocorrect="off">
                         </div>
