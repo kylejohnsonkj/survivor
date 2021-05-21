@@ -1,3 +1,4 @@
-# Survivor Confessional Creator
+[kylejohnsonkj.github.io/survivor/](https://kylejohnsonkj.github.io/survivor/)
 
-<img src="images/screenshot.png" width="400">
+## Screenshot
+![Survivor Confessional Creator](/images/screenshot.png)
